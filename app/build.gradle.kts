@@ -21,12 +21,44 @@ android {
             useSupportLibrary = true
         }
     }
-
+    @Suppress("UnstableApiUsage")
+    flavorDimensions.add("variant")
+    productFlavors {
+        create("redFile") {
+            dimension = "variant"
+            applicationIdSuffix = ".red.file"
+            buildConfigField("String", "BUILD_THEME", "\"RED\"")
+            buildConfigField("String", "MEDIA_SOURCE", "\"FILE\"")
+            resValue("string", "app_name", "ScanCalculatorRedFile")
+        }
+        create("redCamera") {
+            dimension = "variant"
+            applicationIdSuffix = ".red.camera"
+            buildConfigField("String", "BUILD_THEME", "\"RED\"")
+            buildConfigField("String", "MEDIA_SOURCE", "\"CAMERA\"")
+            resValue("string", "app_name", "ScanCalculatorRedCamera")
+        }
+        create("greenFile") {
+            dimension = "variant"
+            applicationIdSuffix = ".green.file"
+            buildConfigField("String", "BUILD_THEME", "\"GREEN\"")
+            buildConfigField("String", "MEDIA_SOURCE", "\"FILE\"")
+            resValue("string", "app_name", "ScanCalculatorGreenFile")
+        }
+        create("greenCamera") {
+            dimension = "variant"
+            applicationIdSuffix = ".green.camera"
+            buildConfigField("String", "BUILD_THEME", "\"GREEN\"")
+            buildConfigField("String", "MEDIA_SOURCE", "\"CAMERA\"")
+            resValue("string", "app_name", "ScanCalculatorGreenCamera")
+        }
+    }
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            @Suppress("UnstableApiUsage")
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            @Suppress("UnstableApiUsage") proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -36,9 +68,9 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    @Suppress("UnstableApiUsage")
-    buildFeatures {
+    @Suppress("UnstableApiUsage") buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.7"
@@ -52,7 +84,8 @@ android {
 
 dependencies {
     implementation(Library.ktx)
-    implementation(Library.lifecycle)
+    implementation(Library.lifecycleRuntimeKtx)
+    implementation(Library.lifecycleViewModelCompose)
     implementation(Library.compose)
     implementation(platform(Library.composeBom))
     implementation(Library.composeUi)

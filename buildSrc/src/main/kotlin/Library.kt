@@ -1,7 +1,8 @@
 object Library {
     // Core
     const val ktx = "androidx.core:core-ktx:${Version.ktx}"
-    const val lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:${Version.lifecycle}"
+    const val lifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:${Version.lifecycle}"
+    const val lifecycleViewModelCompose = "androidx.lifecycle:lifecycle-viewmodel-compose:${Version.lifecycle}"
     const val compose = "androidx.activity:activity-compose:${Version.compose}"
     const val composeBom = "androidx.compose:compose-bom:${Version.composeBom}"
     const val composeUi = "androidx.compose.ui:ui"
