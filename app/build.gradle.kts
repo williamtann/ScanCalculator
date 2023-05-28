@@ -3,6 +3,7 @@ plugins {
     kotlin("android")
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+    kotlin("plugin.serialization")
 }
 
 android {
@@ -83,6 +84,7 @@ android {
 }
 
 dependencies {
+    // Core
     implementation(Library.ktx)
     implementation(Library.lifecycleRuntimeKtx)
     implementation(Library.lifecycleViewModelCompose)
@@ -91,6 +93,7 @@ dependencies {
     implementation(Library.composeUi)
     implementation(Library.composeUiGraphics)
     implementation(Library.composeUiToolingPreview)
+    implementation(Library.composeMaterial)
     implementation(Library.composeMaterial3)
 
     // by ViewModel() for Activity
@@ -99,4 +102,17 @@ dependencies {
     // Dagger - Hilt
     implementation(Library.hilt)
     kapt(Library.hiltAnnotationCompiler)
+
+    // Serialization
+    implementation(Library.serialization)
+
+    // Data Store
+    implementation(Library.datastore)
+
+    // Room
+    implementation(Library.room)
+    kapt(Library.roomCompiler)
+
+    // Gson
+    implementation(Library.gson)
 }

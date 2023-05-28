@@ -13,4 +13,16 @@ object Version {
 
     // Dagger - Hilt
     const val hilt = "2.44"
+
+    // Serialization
+    const val serialization = "1.3.2"
+
+    // Data Store
+    const val datastore = "1.0.0"
+
+    // Room
+    const val room = "2.5.1"
+
+    // Gson
+    const val gson = "2.9.0"
 }
