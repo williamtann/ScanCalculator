@@ -1,5 +1,6 @@
 package app.will.scancalculator
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.will.scancalculator.gateway.DataRepository
@@ -19,6 +20,20 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val dataRepository: DataRepository
 ) : ViewModel() {
+
+    val visiblePermissionDialogQueue = mutableStateListOf<String>()
+
+    fun dismissDialog() {
+        visiblePermissionDialogQueue.removeFirst()
+    }
+
+    fun onPermissionResult(
+        permission: String
+    ) {
+        if (!visiblePermissionDialogQueue.contains(permission)) {
+            visiblePermissionDialogQueue.add(permission)
+        }
+    }
 
     private val _dataSourceType = MutableStateFlow(DataSourceType.ROOM_DATABASE)
     val dataSourceType = _dataSourceType.asStateFlow()

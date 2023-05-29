@@ -4,6 +4,16 @@ plugins {
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
     kotlin("plugin.serialization")
+    id("com.google.devtools.ksp") version "1.8.21-1.0.11"
+}
+
+kotlin {
+    sourceSets.main {
+        kotlin.srcDir("build/generated/ksp/main/kotlin")
+    }
+    sourceSets.test {
+        kotlin.srcDir("build/generated/ksp/test/kotlin")
+    }
 }
 
 android {
@@ -96,9 +106,6 @@ dependencies {
     implementation(Library.composeMaterial)
     implementation(Library.composeMaterial3)
 
-    // by ViewModel() for Activity
-    implementation(Library.activityKtx)
-
     // Dagger - Hilt
     implementation(Library.hilt)
     kapt(Library.hiltAnnotationCompiler)
@@ -115,4 +122,17 @@ dependencies {
 
     // Gson
     implementation(Library.gson)
+
+    // Navigation
+    implementation(Library.hiltNavigation)
+    implementation(Library.composeDestinations)
+    ksp(Library.composeDestinationsKsp)
+
+    // Coil
+    implementation(Library.coil)
+
+    // CameraX
+    implementation(Library.cameraxCore)
+    implementation(Library.cameraxLifecycle)
+    implementation(Library.cameraxView)
 }

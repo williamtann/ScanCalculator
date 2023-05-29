@@ -8,9 +8,6 @@ object Version {
     const val constraintLayout = "2.1.4"
     const val googleMaterial = "1.7.0"
 
-    // by ViewModel for Activity
-    const val activityKtx = "1.6.1"
-
     // Dagger - Hilt
     const val hilt = "2.44"
 
@@ -25,4 +22,14 @@ object Version {
 
     // Gson
     const val gson = "2.9.0"
+
+    // Navigation
+    const val hiltNavigation = "1.0.0"
+    const val composeDestinations = "1.9.42-beta"
+
+    // Coil
+    const val coil = "2.4.0"
+
+    // CameraX
+    const val cameraX = "1.2.3"
 }

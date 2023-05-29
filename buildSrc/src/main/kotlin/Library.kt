@@ -11,9 +11,6 @@ object Library {
     const val composeMaterial = "androidx.compose.material:material"
     const val composeMaterial3 = "androidx.compose.material3:material3"
 
-    // by ViewModel for Activity
-    const val activityKtx = "androidx.activity:activity-ktx:${Version.activityKtx}"
-
     // Dagger - Hilt
     const val hilt = "com.google.dagger:hilt-android:${Version.hilt}"
     const val hiltAnnotationCompiler = "com.google.dagger:hilt-android-compiler:${Version.hilt}"
@@ -30,4 +27,17 @@ object Library {
 
     // Gson
     const val gson = "com.google.code.gson:gson:${Version.gson}"
+
+    // Navigation
+    const val hiltNavigation = "androidx.hilt:hilt-navigation-compose:${Version.hiltNavigation}"
+    const val composeDestinations = "io.github.raamcosta.compose-destinations:core:${Version.composeDestinations}"
+    const val composeDestinationsKsp = "io.github.raamcosta.compose-destinations:ksp:${Version.composeDestinations}"
+
+    // Coil
+    const val coil = "io.coil-kt:coil-compose:${Version.coil}"
+
+    // CameraX
+    const val cameraxCore = "androidx.camera:camera-camera2:${Version.cameraX}"
+    const val cameraxLifecycle = "androidx.camera:camera-lifecycle:${Version.cameraX}"
+    const val cameraxView = "androidx.camera:camera-view:${Version.cameraX}"
 }
