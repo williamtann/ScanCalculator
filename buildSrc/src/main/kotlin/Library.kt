@@ -40,4 +40,7 @@ object Library {
     const val cameraxCore = "androidx.camera:camera-camera2:${Version.cameraX}"
     const val cameraxLifecycle = "androidx.camera:camera-lifecycle:${Version.cameraX}"
     const val cameraxView = "androidx.camera:camera-view:${Version.cameraX}"
+
+    // MlKit
+    const val mlKit = "com.google.android.gms:play-services-mlkit-text-recognition:${Version.mlKit}"
 }

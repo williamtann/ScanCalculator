@@ -32,4 +32,7 @@ object Version {
 
     // CameraX
     const val cameraX = "1.2.3"
+
+    // MlKit
+    const val mlKit = "19.0.0"
 }

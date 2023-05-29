@@ -135,4 +135,7 @@ dependencies {
     implementation(Library.cameraxCore)
     implementation(Library.cameraxLifecycle)
     implementation(Library.cameraxView)
+
+    // MlKit
+    implementation(Library.mlKit)
 }

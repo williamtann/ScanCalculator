@@ -1,4 +1,4 @@
-package app.will.scancalculator
+package app.will.scancalculator.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
@@ -71,11 +71,11 @@ class MainViewModel @Inject constructor(
         _dataSourceType.value = dataSourceType
     }
 
-    fun saveCalculation(formula: String, result: String) {
+    fun saveCalculation(calculation: Calculation) {
         when (_dataSourceType.value) {
             DataSourceType.ROOM_DATABASE -> {
                 viewModelScope.launch {
-                    dataRepository.saveCalculationRoom(Calculation(formula, result))
+                    dataRepository.saveCalculationRoom(calculation)
                 }
             }
 
@@ -83,7 +83,7 @@ class MainViewModel @Inject constructor(
                 viewModelScope.launch {
                     dataRepository.saveCalculationFile(
                         _calculationsFile.value.toMutableList().apply {
-                            add((Calculation(formula, result)))
+                            add((calculation))
                         })
                 }
             }

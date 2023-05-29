@@ -1,6 +1,5 @@
 package app.will.scancalculator.service
 
-import android.app.Application
 import app.will.scancalculator.gateway.DataRepository
 import app.will.scancalculator.local.dao.CalculationDao
 import app.will.scancalculator.local.entity.CalculationEnt
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class DataRepositoryImpl @Inject constructor(
-    private val app: Application,
     private val calculationDao: CalculationDao,
     private val dataStoreManager: DataStoreManager
 ) : DataRepository {

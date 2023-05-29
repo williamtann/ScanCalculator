@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.sharp.Build
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -36,9 +35,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
-import app.will.scancalculator.ui.screen.destinations.CalculationScreenDestination
+import app.will.scancalculator.Const.FULL_TIME_FORMAT
+import app.will.scancalculator.Const.JPG_FORMAT
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.will.scancalculator.R
 import kotlinx.coroutines.launch
 import java.io.File
@@ -51,7 +51,7 @@ import kotlin.coroutines.suspendCoroutine
 @Destination
 @Composable
 fun CameraScreen(
-    navigator: DestinationsNavigator
+    resultNavigator: ResultBackNavigator<Uri>
 ) {
     val mainScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -83,16 +83,18 @@ fun CameraScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView({ previewView }, modifier = Modifier.fillMaxSize())
         Column(
-            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 24.dp),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 24.dp),
             verticalArrangement = Arrangement.Bottom
         ) {
             IconButton(
                 onClick = {
                     imageCapture.takePicture(context, onImageCaptured = { uri ->
                         mainScope.launch {
-                            navigator.navigate(CalculationScreenDestination(uri.toString()))
+                            resultNavigator.navigateBack(result = uri)
                         }
-                    }, onError = {})
+                    }, onError = { it.printStackTrace() })
                 },
                 modifier = Modifier
                     .size(64.dp)
@@ -113,8 +115,8 @@ fun ImageCapture.takePicture(
     val outputDirectory = context.getOutputDirectory()
     val photoFile = File(
         outputDirectory, SimpleDateFormat(
-            "yyyy-MM-dd-HH-mm-ss-SSS", Locale.US
-        ).format(System.currentTimeMillis()) + ".jpg"
+            FULL_TIME_FORMAT, Locale.US
+        ).format(System.currentTimeMillis()) + JPG_FORMAT
     )
     val outputFileOptions =
         ImageCapture.OutputFileOptions.Builder(photoFile).setMetadata(ImageCapture.Metadata())
