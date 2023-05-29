@@ -9,13 +9,14 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.will.scancalculator.R
 
 @Composable
 fun PermissionDialog(
-    permissionTextProvider: PermissionTextProvider,
     isPermanentlyDeclined: Boolean,
     onDismiss: () -> Unit,
     onOkClick: () -> Unit,
@@ -28,9 +29,9 @@ fun PermissionDialog(
         ) {
             Divider()
             Text(text = if (isPermanentlyDeclined) {
-                "Grant permission"
+                stringResource(R.string.grant_permission)
             } else {
-                "OK"
+                stringResource(R.string.ok)
             },
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -46,27 +47,15 @@ fun PermissionDialog(
                     .padding(16.dp))
         }
     }, title = {
-        Text(text = "Permission required")
+        Text(text = stringResource(R.string.permission_required))
     }, text = {
         Text(
-            text = permissionTextProvider.getDescription(
-                isPermanentlyDeclined = isPermanentlyDeclined
-            )
+            text = if (isPermanentlyDeclined) {
+                stringResource(R.string.permanently_declined)
+            } else {
+                stringResource(R.string.permission_reason)
+            }
         )
     }, modifier = modifier
     )
-}
-
-interface PermissionTextProvider {
-    fun getDescription(isPermanentlyDeclined: Boolean): String
-}
-
-class CameraPermissionTextProvider : PermissionTextProvider {
-    override fun getDescription(isPermanentlyDeclined: Boolean): String {
-        return if (isPermanentlyDeclined) {
-            "It seems you permanently declined camera permission. You can go to the app settings to grant it."
-        } else {
-            "This app needs access to your camera so that you can take a picture and scan the formula."
-        }
-    }
 }

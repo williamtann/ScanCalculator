@@ -34,7 +34,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,7 +51,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import app.will.scancalculator.Const
 import app.will.scancalculator.model.Calculation
 import app.will.scancalculator.model.DataSourceType
-import app.will.scancalculator.ui.dialog.CameraPermissionTextProvider
 import app.will.scancalculator.ui.dialog.PermissionDialog
 import app.will.scancalculator.ui.screen.destinations.CameraScreenDestination
 import app.will.scancalculator.util.CalculationUtil.getCalculationFromTextBlocks
@@ -61,6 +64,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
 import com.will.scancalculator.BuildConfig
+import com.will.scancalculator.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -76,25 +80,25 @@ fun MainScreen(
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
     val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-    val dialogQueue = viewModel.visiblePermissionDialogQueue
-    val photoPickerLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = { uri ->
-                uri?.let {
-                    detectText(context, it, recognizer, viewModel, coroutineScope, scaffoldState)
-                }
-            })
-    val cameraPermissionResultLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            if (isGranted) {
-                navigator.navigate(CameraScreenDestination())
-            } else {
-                viewModel.onPermissionResult(
-                    permission = Manifest.permission.CAMERA
-                )
+    var cameraPermissionRequest by remember {
+        mutableStateOf("")
+    }
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            uri?.let {
+                detectText(context, it, recognizer, viewModel, coroutineScope, scaffoldState)
             }
         })
+    val cameraPermissionResultLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted ->
+                if (isGranted) {
+                    navigator.navigate(CameraScreenDestination())
+                } else {
+                    cameraPermissionRequest = Manifest.permission.CAMERA
+                }
+            })
 
     resultRecipient.onNavResult { result ->
         when (result) {
@@ -140,8 +144,8 @@ fun MainScreen(
                 .fillMaxSize()
                 .padding(scaffoldPadding)
         ) {
-            DataSourceOption(DataSourceType.ROOM_DATABASE, viewModel, dataSourceType)
-            DataSourceOption(DataSourceType.DATA_STORE_FILE, viewModel, dataSourceType)
+            DataSourceOption(DataSourceType.ROOM_DATABASE, viewModel, context, dataSourceType)
+            DataSourceOption(DataSourceType.DATA_STORE_FILE, viewModel, context, dataSourceType)
             Divider(color = Color.LightGray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
             LazyColumn(
                 contentPadding = PaddingValues(16.dp),
@@ -155,17 +159,11 @@ fun MainScreen(
         }
     }
 
-    dialogQueue.forEach { permission ->
-        PermissionDialog(permissionTextProvider = when (permission) {
-            Manifest.permission.CAMERA -> {
-                CameraPermissionTextProvider()
-            }
-
-            else -> return@forEach
-        }, isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
-            activity, permission
-        ), onDismiss = viewModel::dismissDialog, onOkClick = {
-            viewModel.dismissDialog()
+    if (cameraPermissionRequest.isNotEmpty()) {
+        PermissionDialog(isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
+            activity, cameraPermissionRequest
+        ), onDismiss = { cameraPermissionRequest = "" }, onOkClick = {
+            cameraPermissionRequest = ""
             cameraPermissionResultLauncher.launch(
                 Manifest.permission.CAMERA
             )
@@ -180,7 +178,7 @@ fun MainScreen(
 
 @Composable
 fun DataSourceOption(
-    type: DataSourceType, viewModel: MainViewModel, dataSourceType: State<DataSourceType>
+    type: DataSourceType, viewModel: MainViewModel, context: Context, dataSourceType: State<DataSourceType>
 ) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
         viewModel.updateDataSource(type)
@@ -192,7 +190,7 @@ fun DataSourceOption(
             },
         )
         Text(
-            text = type.getLabel(), modifier = Modifier.fillMaxWidth()
+            text = type.getLabel(context), modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -209,15 +207,15 @@ fun CalculationItem(calculation: Calculation) {
             text = "Result: ${calculation.result}",
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Color.Black
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }
 
-private fun DataSourceType.getLabel(): String {
+private fun DataSourceType.getLabel(context: Context): String {
     return when (this) {
-        DataSourceType.ROOM_DATABASE -> "Room Database"
-        DataSourceType.DATA_STORE_FILE -> "Local File"
+        DataSourceType.ROOM_DATABASE -> context.getString(R.string.room_database)
+        DataSourceType.DATA_STORE_FILE -> context.getString(R.string.local_file)
     }
 }
 
@@ -236,20 +234,32 @@ private fun detectText(
             if (calculation != null) {
                 viewModel.saveCalculation(calculation)
                 showSnackbar(
-                    coroutineScope,
-                    scaffoldState,
-                    "Calculation (${calculation.formula}=${calculation.result}) saved!"
+                    coroutineScope, scaffoldState, context.getString(
+                        R.string.calculation_saved, calculation.formula, calculation.result
+                    )
                 )
             } else {
-                showSnackbar(coroutineScope, scaffoldState, "Failed to detect formula from image!")
+                showSnackbar(
+                    coroutineScope,
+                    scaffoldState,
+                    context.getString(R.string.failed_to_detect_formula_message)
+                )
             }
         }.addOnFailureListener { e ->
             e.printStackTrace()
-            showSnackbar(coroutineScope, scaffoldState, "Failed to detect formula from image!")
+            showSnackbar(
+                coroutineScope,
+                scaffoldState,
+                context.getString(R.string.failed_to_detect_formula_message)
+            )
         }
     } catch (e: IOException) {
         e.printStackTrace()
-        showSnackbar(coroutineScope, scaffoldState, "Failed to detect formula from image!")
+        showSnackbar(
+            coroutineScope,
+            scaffoldState,
+            context.getString(R.string.failed_to_detect_formula_message)
+        )
     }
 }
 

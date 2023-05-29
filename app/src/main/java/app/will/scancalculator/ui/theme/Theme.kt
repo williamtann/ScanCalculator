@@ -2,7 +2,6 @@ package app.will.scancalculator.ui.theme
 
 import android.app.Activity
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -12,12 +11,12 @@ import androidx.core.view.WindowCompat
 import app.will.scancalculator.Const
 import com.will.scancalculator.BuildConfig
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80, secondary = PurpleGrey80, tertiary = Pink80
+private val RedColorScheme = lightColorScheme(
+    primary = RedPrimary, secondary = RedSecondary, tertiary = RedTertiary
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40, secondary = PurpleGrey40, tertiary = Pink40
+private val GreenColorScheme = lightColorScheme(
+    primary = GreenPrimary, secondary = GreenSecondary, tertiary = GreenTertiary
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -35,9 +34,9 @@ fun ScanCalculatorTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = when (BuildConfig.BUILD_THEME) {
-        Const.BuildTheme.RED.name -> DarkColorScheme
-        Const.BuildTheme.GREEN.name -> LightColorScheme
-        else -> LightColorScheme
+        Const.BuildTheme.RED.name -> RedColorScheme
+        Const.BuildTheme.GREEN.name -> GreenColorScheme
+        else -> GreenColorScheme
     }
     val view = LocalView.current
     if (!view.isInEditMode) {
